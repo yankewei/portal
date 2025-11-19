@@ -3,18 +3,30 @@ import Image from 'next/image';
 
 export default function SupportPage() {
   const apps = [
-          {
-        id: 'countdown',
-        name: '初一到十五',
-        description: '一款专注于农历日期的应用，帮助您追踪农历月份的初一到十五阶段。',
-        icon: '/image/lunar-loop-logo.png',
-        features: [
-          '显示当前农历日期和时间',
-          '追踪农历月份从初一到十五的进度',
-          '提供农历节气和传统节日信息',
-          '简洁直观的用户界面'
-        ]
-      }
+    {
+      id: 'countdown',
+      name: '初一到十五',
+      description: '一款专注于农历日期的应用，帮助您追踪农历月份的初一到十五阶段。',
+      icon: '/image/lunar-loop-logo.png',
+      features: [
+        '显示当前农历日期和时间',
+        '追踪农历月份从初一到十五的进度',
+        '提供农历节气和传统节日信息',
+        '简洁直观的用户界面',
+      ],
+    },
+    {
+      id: 'chronic-note',
+      name: 'Chronic Note',
+      description: '慢性病数据管理，再也不担心数据丢失。',
+      icon: '/image/chronic-note-logo.png',
+      features: [
+        '支持 Sign in with Apple，保证账户安全',
+        '记录血压、血糖、用药等慢性病关键数据',
+        '自动备份与加密存储，避免数据丢失',
+        '导出数据，与医生共享病情变化',
+      ],
+    },
   ];
 
   return (

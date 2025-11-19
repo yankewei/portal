@@ -15,7 +15,18 @@ export default function PrivacyPage() {
         "完全控制您的倒数日数据",
       ],
     },
-    // 未来可以在这里添加更多APP
+    {
+      id: "chronic-note",
+      name: "Chronic Note",
+      description: "慢性病数据管理，再也不担心数据丢失",
+      icon: "/image/chronic-note-logo.png",
+      privacyHighlights: [
+        "使用 Sign in with Apple，最小化身份信息共享",
+        "仅存储用户主动填写的慢性病数据，不做分析",
+        "数据加密存储，可随时导出与删除",
+        "绝不与第三方共享或出售健康数据",
+      ],
+    },
   ];
 
   return (
