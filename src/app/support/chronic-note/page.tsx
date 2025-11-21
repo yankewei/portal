@@ -34,8 +34,10 @@ export default function ChronicNoteSupportPage() {
         <section className="bg-fd-muted/30 rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">应用简介</h2>
           <p className="text-fd-muted-foreground mb-4">
-            Chronic Note 通过结构化数据记录，帮助您持续追踪慢性病指标、用药和症状，确保每一次就诊都有完整资料。应用支持
-            Sign in with Apple 登录，数据在云端安全存储并可跨设备同步，避免意外丢失。
+            Chronic Note
+            通过结构化数据记录，帮助您持续追踪慢性病指标、用药和症状，确保每一次就诊都有完整资料。应用支持
+            Sign in with Apple
+            登录，数据在云端安全存储并可跨设备同步，避免意外丢失。
           </p>
           <div>
             <h3 className="font-semibold mb-2">核心能力：</h3>
@@ -55,8 +57,9 @@ export default function ChronicNoteSupportPage() {
             <div>
               <h3 className="font-semibold mb-2">如何登录 Chronic Note？</h3>
               <p className="text-fd-muted-foreground">
-                点击应用首页的 &ldquo;继续使用 Apple 登录&rdquo; 按钮即可完成身份验证。我们不会获取您的邮箱或姓名，只会存储
-                Apple 提供的匿名标识符用于创建账户。
+                点击应用首页的 &ldquo;继续使用 Apple 登录&rdquo;
+                按钮即可完成身份验证。我们不会获取您的邮箱或姓名，只会存储 Apple
+                提供的匿名标识符用于创建账户。
               </p>
             </div>
             <div>
@@ -75,7 +78,17 @@ export default function ChronicNoteSupportPage() {
             <div>
               <h3 className="font-semibold mb-2">如何备份或导出数据？</h3>
               <p className="text-fd-muted-foreground">
-                应用自动在云端保存您的记录，您也可以在设置 &gt; 数据管理中手动导出 CSV 或 PDF 文件，方便打印或分享给医生。
+                应用自动在云端保存您的记录，您也可以在设置 &gt;
+                数据管理中手动导出 CSV 或 PDF 文件，方便打印或分享给医生。
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">
+                如何彻底删除数据或注销账户？
+              </h3>
+              <p className="text-fd-muted-foreground">
+                在设置 &gt; 数据管理中选择
+                &ldquo;删除全部数据&rdquo;，系统会立即从云端与本地移除所有记录且无法恢复。如需同时注销账户，可在删除后点击注销或发送邮件联系我们。
               </p>
             </div>
           </div>
@@ -87,7 +100,9 @@ export default function ChronicNoteSupportPage() {
           <ul className="text-fd-muted-foreground space-y-2 list-disc list-inside">
             <li>Sign in with Apple 提供身份验证，确保只有您可以访问数据</li>
             <li>所有慢性病数据在传输和存储时均采用加密</li>
-            <li>如需删除云端数据或注销账户，请发送邮件联系我们处理</li>
+            <li>
+              您可在应用内随时一键删除全部数据，删除后不会保留任何云端副本
+            </li>
             <li>我们不会向第三方共享或出售任何健康信息</li>
           </ul>
         </section>

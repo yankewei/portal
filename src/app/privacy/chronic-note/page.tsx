@@ -37,10 +37,13 @@ export default function ChronicNotePrivacyPage() {
         {/* Introduction */}
         <section className="bg-fd-muted/30 rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">简介</h2>
-          <p className="text-fd-muted-foreground mb-4">最后更新：{lastUpdated}</p>
+          <p className="text-fd-muted-foreground mb-4">
+            最后更新：{lastUpdated}
+          </p>
           <p className="text-fd-muted-foreground">
-            本隐私政策解释 Chronic Note（&ldquo;我们&rdquo;）在您使用应用时如何处理数据。Chronic
-            Note 仅收集运行服务所必需的信息，并不会对您的健康数据进行任何自动分析或广告用途。
+            本隐私政策解释 Chronic
+            Note（&ldquo;我们&rdquo;）在您使用应用时如何处理数据。Chronic Note
+            仅收集运行服务所必需的信息，并不会对您的健康数据进行任何自动分析或广告用途。
           </p>
         </section>
 
@@ -51,7 +54,8 @@ export default function ChronicNotePrivacyPage() {
             <div>
               <h3 className="font-semibold mb-2">账户信息</h3>
               <p className="text-fd-muted-foreground">
-                我们使用 Sign in with Apple 提供身份验证，仅保存 Apple 返回的唯一用户标识符以及您允许共享的邮箱（如有）。该信息用于识别账户并同步数据。
+                我们使用 Sign in with Apple 提供身份验证，仅保存 Apple
+                返回的唯一用户标识符以及您允许共享的邮箱（如有）。该信息用于识别账户并同步数据。
               </p>
             </div>
             <div>
@@ -92,7 +96,10 @@ export default function ChronicNotePrivacyPage() {
               <li>传输与存储均使用加密，防止未授权访问</li>
               <li>所有云端数据托管在 Apple 基础设施中，符合平台安全要求</li>
               <li>您可以在应用内导出和下载数据备份，方便与医生共享</li>
-              <li>如需删除云端数据或注销账户，请发送邮件提出申请，我们将人工处理</li>
+              <li>
+                您可在设置 &gt;
+                数据管理中一键删除全部数据，云端与本地会立即清除且不可恢复
+              </li>
             </ul>
           </div>
         </section>
@@ -115,6 +122,7 @@ export default function ChronicNotePrivacyPage() {
           <h2 className="text-xl font-semibold mb-4">您的权利</h2>
           <ul className="text-fd-muted-foreground space-y-2 list-disc list-inside">
             <li>随时查看、修改或删除您录入的任何数据</li>
+            <li>通过设置 &gt; 数据管理一键删除全部记录并停止同步</li>
             <li>导出全部记录，用于备份或与医生共享</li>
             <li>如需撤回 Apple 登录授权或注销账户，请联系我们协助处理</li>
             <li>如果您对隐私政策有疑问，可随时联系我们</li>
