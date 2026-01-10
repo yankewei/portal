@@ -1,8 +1,8 @@
 {
-    "pages": [
-        "php-85-adds-pipe-operator",
-        "rust-via-mago-one",
-        "php-implementation-of-a-weighted-array_rand-method",
-        "implementation-principle-of-laravel-job-release-driven-by-redis"
-    ]
+  "pages": [
+    "php-85-adds-pipe-operator",
+    "rust-via-mago-one",
+    "php-implementation-of-a-weighted-array_rand-method",
+    "implementation-principle-of-laravel-job-release-driven-by-redis"
+  ]
 }

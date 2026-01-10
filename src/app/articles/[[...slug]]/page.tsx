@@ -8,12 +8,14 @@ import {
 import { notFound } from 'next/navigation';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { getMDXComponents } from '@/mdx-components';
+import GiscusComments from '@/components/giscus-comments';
 
 
 export default async function Page(props: {
   params: Promise<{ slug?: string[] }>;
 }) {
   const params = await props.params;
+  const showComments = !!params.slug?.length;
   const page = source.getPage(params.slug);
   if (!page) notFound();
 
@@ -31,6 +33,7 @@ export default async function Page(props: {
           })}
         />
       </DocsBody>
+      {showComments ? <GiscusComments /> : null}
     </DocsPage>
   );
 }
