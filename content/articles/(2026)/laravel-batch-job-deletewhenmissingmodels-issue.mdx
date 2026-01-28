@@ -1,0 +1,194 @@
+---
+title: Laravel Batch Job 的隐藏陷阱：deleteWhenMissingModels 会让 finally 回调失效
+---
+
+> TL;DR
+> - `deleteWhenMissingModels` 会在反序列化阶段直接删除 Job
+> - Batch 计数不会更新，`pendingJobs` 无法归零
+> - `finally` 依赖 `pendingJobs - failedJobs === 0`，因此回调不触发
+
+## 背景
+
+最近在排查一个生产问题时发现：当 Batch Job 使用了 `deleteWhenMissingModels`，且依赖的 Model 被硬删除后，Batch 的 `finally` 回调永远不会执行。
+
+这篇文章记录排查过程、解释根因，并给出可落地的替代方案。
+
+## 问题现象
+
+我们有一个定时同步的批量任务，使用 Laravel Batch 并行处理多个业务实体：
+
+```php
+Bus::batch($jobs)
+    ->finally(function (Batch $batch) {
+        $this->notifyMonitor($batch);
+    })
+    ->dispatch();
+```
+
+某天发现监控平台一直没有收到完成通知，但队列里已经没有待处理 Job。
+
+进一步检查 `job_batches`：
+
+```sql
+SELECT id, total_jobs, pending_jobs, failed_jobs, finished_at
+FROM job_batches
+WHERE id = 'xxx';
+```
+
+结果类似：
+
+- `total_jobs`: 100
+- `pending_jobs`: 3
+- `failed_jobs`: 0
+- `finished_at`: NULL
+
+## finally 为什么没执行
+
+查看 `Illuminate\Bus\Batch.php`，`finally` 的触发条件是：
+
+```php
+// recordSuccessfulJob
+if ($counts->allJobsHaveRanExactlyOnce() && $this->hasFinallyCallbacks()) {
+    $this->invokeCallbacks('finally');
+}
+```
+
+`allJobsHaveRanExactlyOnce()` 的判断逻辑：
+
+```php
+// UpdatedBatchJobCounts.php
+public function allJobsHaveRanExactlyOnce()
+{
+    return ($this->pendingJobs - $this->failedJobs) === 0;
+}
+```
+
+也就是说，只有当 `pendingJobs - failedJobs === 0` 时，`finally` 才会执行。
+
+## Batch 计数器是如何更新的
+
+| 事件 | pendingJobs | failedJobs |
+|------|-------------|------------|
+| Job 成功 | -1 | 不变 |
+| Job 失败 | 不变 | +1 |
+
+这个机制确保：
+
+- 成功 Job 会减少 `pendingJobs`
+- 失败 Job 会增加 `failedJobs`
+- 当 `pendingJobs === failedJobs`，说明所有 pending 的 Job 都已经失败过
+
+## deleteWhenMissingModels 打断了计数更新
+
+我们的 Job 设置了 `deleteWhenMissingModels`：
+
+```php
+class SyncEntityOnSchedule extends SyncOnSchedule
+{
+    public bool $deleteWhenMissingModels = true;
+
+    public function __construct(
+        private readonly DomainEntity $entity
+    ) {}
+}
+```
+
+当 Job 反序列化时，如果 Model 被硬删除，`CallQueuedHandler::handleModelNotFound()` 会直接删掉 Job：
+
+```php
+protected function handleModelNotFound(Job $job, $e)
+{
+    $class = $job->resolveQueuedJobClass();
+
+    $shouldDelete = $reflectionClass->getDefaultProperties()['deleteWhenMissingModels']
+        ?? count($reflectionClass->getAttributes(DeleteWhenMissingModels::class)) !== 0;
+
+    if ($shouldDelete) {
+        return $job->delete();
+    }
+
+    return $job->fail($e);
+}
+```
+
+而正常流程是先更新 Batch，再删除 Job：
+
+```php
+public function call(Job $job, array $data)
+{
+    $command = $this->getCommand($data);
+
+    $this->dispatchThroughMiddleware($job, $command);
+
+    if (! $job->hasFailed() && ! $job->isReleased()) {
+        $this->ensureSuccessfulBatchJobIsRecorded($command);
+    }
+
+    $job->delete();
+}
+```
+
+**关键差异：** `handleModelNotFound()` 直接删除 Job，跳过了 Batch 的计数更新。
+
+## 为什么不能在 handleModelNotFound 中直接更新 Batch
+
+`ModelNotFoundException` 发生在反序列化阶段，此时 `$command` 对象尚未创建，
+也就无法通过 `$command->batch()` 获取 Batch 信息。
+
+## 这算 Bug 吗？
+
+更像是一个 **功能组合的边缘情况**：
+
+- `deleteWhenMissingModels` 的行为是合理的
+- Batch Job 的计数逻辑也是正确的
+- 但两者组合使用时产生了不符合预期的结果
+
+## 解决方案
+
+### 方案一：避免使用 deleteWhenMissingModels
+
+让 `ModelNotFoundException` 正常抛出，Job 会走失败流程，
+`recordFailedJob` 会更新 Batch 计数，`finally` 能正常触发。
+
+### 方案二：不要传 Model，改为传 ID
+
+避免反序列化时触发 `ModelNotFoundException`，在 `handle()` 内显式检查：
+
+```php
+class SyncEntityOnSchedule extends SyncOnSchedule
+{
+    public function __construct(
+        private readonly int $entity_id
+    ) {}
+
+    public function handle(): void
+    {
+        $model = DomainEntity::find($this->entity_id);
+
+        if ($model === null) {
+            return;
+        }
+
+        // Business logic
+    }
+}
+```
+
+这种写法会让 Job 正常完成，从而更新 Batch 计数。
+代价是多一次查询，但可预测性更高。
+
+## 总结
+
+- `deleteWhenMissingModels` 会让 Job 在反序列化阶段被直接删除
+- Batch 的计数不会更新，`finally` 因条件不满足而失效
+- 如果你的 Batch Job 注入了可能被硬删除的 Model，建议优先采用方案一或方案二
+
+---
+
+**Laravel 版本**：v12.46.0
+
+**相关文件**：
+
+- [`Illuminate/Queue/CallQueuedHandler.php`](https://github.com/laravel/framework/blob/v12.46.0/src/Illuminate/Queue/CallQueuedHandler.php)
+- [`Illuminate/Bus/Batch.php`](https://github.com/laravel/framework/blob/v12.46.0/src/Illuminate/Bus/Batch.php)
+- [`Illuminate/Bus/UpdatedBatchJobCounts.php`](https://github.com/laravel/framework/blob/v12.46.0/src/Illuminate/Bus/UpdatedBatchJobCounts.php)

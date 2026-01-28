@@ -1,6 +1,6 @@
 {
     "title": "Display Name",
     "icon": "MyIcon",
-    "pages": ["index", "(2025)", "(2024)"],
+    "pages": ["index", "(2026)", "(2025)", "(2024)"],
     "defaultOpen": true
 }
