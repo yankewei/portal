@@ -34,7 +34,7 @@ export default function PrivacyPage() {
       icon: "/image/key-dock-logo.png",
       privacyHighlights: [
         "所有密钥通过 macOS 系统钥匙串加密存储",
-        "完全本地运行，不上传任何数据到云端",
+        "凭证元数据通过 iCloud 安全同步，托管在 Apple 基础设施中",
         "无第三方分析、广告或追踪 SDK",
         "Touch ID 生物识别保护，5 分钟会话超时",
       ],

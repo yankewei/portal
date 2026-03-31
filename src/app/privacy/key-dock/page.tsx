@@ -43,8 +43,9 @@ export default function KeyDockPrivacyPage() {
           <p className="text-fd-muted-foreground">
             本隐私政策解释 Key
             Dock（&ldquo;我们&rdquo;）在您使用应用时如何处理数据。Key Dock
-            是一款完全本地运行的 macOS
-            凭证管理工具，您的所有敏感数据均存储在设备本地，不会上传到任何服务器。
+            是一款 macOS
+            凭证管理工具，您的 API 密钥通过系统钥匙串加密存储，凭证元数据通过
+            iCloud 在您的设备间安全同步。
           </p>
         </section>
 
@@ -56,8 +57,9 @@ export default function KeyDockPrivacyPage() {
               <h3 className="font-semibold mb-2">凭证元数据</h3>
               <p className="text-fd-muted-foreground">
                 Key Dock 通过 SwiftData
-                在本地存储凭证记录的元数据，包括凭证名称、API
-                提供商类型和创建时间等。这些数据仅保存在您的设备上。
+                存储凭证记录的元数据，包括凭证名称、API
+                提供商类型和创建时间等。这些数据通过 iCloud
+                在您的 Apple 设备间安全同步，托管在 Apple 基础设施中。
               </p>
             </div>
             <div>
@@ -109,7 +111,7 @@ export default function KeyDockPrivacyPage() {
                 查看密钥内容需通过 Touch ID 或密码验证
               </li>
               <li>
-                所有数据完全存储在本地设备上，不会同步到云端
+                凭证元数据通过 iCloud 安全同步，托管在 Apple 加密基础设施中
               </li>
               <li>
                 删除凭证时，密钥会从系统钥匙串中彻底移除
@@ -142,11 +144,11 @@ export default function KeyDockPrivacyPage() {
         <section className="bg-fd-muted/30 rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">数据共享</h2>
           <p className="text-fd-muted-foreground mb-4">
-            我们不会收集、上传或共享您的任何数据：
+            我们不会向第三方共享您的任何数据：
           </p>
           <ul className="text-fd-muted-foreground space-y-2 list-disc list-inside">
             <li>不会向任何第三方共享或出售您的数据</li>
-            <li>不会将密钥或凭证信息上传到任何服务器</li>
+            <li>iCloud 同步仅限您自己的 Apple 账户设备之间</li>
             <li>不使用任何远程分析或遥测服务</li>
           </ul>
         </section>

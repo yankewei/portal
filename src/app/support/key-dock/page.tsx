@@ -88,11 +88,12 @@ export default function KeyDockSupportPage() {
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-2">密钥会上传到云端吗？</h3>
+              <h3 className="font-semibold mb-2">数据会同步到云端吗？</h3>
               <p className="text-fd-muted-foreground">
-                不会。所有数据完全存储在本地，包括系统钥匙串中的密钥和
-                SwiftData 中的凭证记录。Key Dock
-                不会将您的密钥上传到任何服务器。
+                凭证元数据（名称、提供商类型等）会通过 iCloud
+                在您的 Apple 设备间安全同步。API
+                密钥本身通过系统钥匙串加密存储。所有云端数据托管在 Apple
+                基础设施中，不会发送到任何第三方服务器。
               </p>
             </div>
           </div>
