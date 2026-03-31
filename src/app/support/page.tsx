@@ -27,6 +27,18 @@ export default function SupportPage() {
         '导出数据，与医生共享病情变化',
       ],
     },
+    {
+      id: 'key-dock',
+      name: 'Key Dock',
+      description: 'macOS API 密钥管理工具，安全存储和验证您的凭证。',
+      icon: '/image/key-dock-logo.png',
+      features: [
+        '通过 macOS 系统钥匙串加密存储 API 密钥',
+        '支持 DeepSeek、Kimi Code、OpenAI 等提供商',
+        'Touch ID / 密码生物识别锁定保护',
+        '一键验证 API 密钥有效性',
+      ],
+    },
   ];
 
   return (

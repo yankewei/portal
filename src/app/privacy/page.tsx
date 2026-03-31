@@ -27,6 +27,18 @@ export default function PrivacyPage() {
         "绝不与第三方共享或出售健康数据",
       ],
     },
+    {
+      id: "key-dock",
+      name: "Key Dock",
+      description: "macOS API 密钥管理工具，安全存储和验证您的凭证",
+      icon: "/image/key-dock-logo.png",
+      privacyHighlights: [
+        "所有密钥通过 macOS 系统钥匙串加密存储",
+        "完全本地运行，不上传任何数据到云端",
+        "无第三方分析、广告或追踪 SDK",
+        "Touch ID 生物识别保护，5 分钟会话超时",
+      ],
+    },
   ];
 
   return (
