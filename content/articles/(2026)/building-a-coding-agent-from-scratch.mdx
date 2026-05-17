@@ -1,0 +1,478 @@
+---
+title: 从零做一个 Coding Agent：我这几天真正学到的东西
+---
+
+这段时间我在做一个很小的 coding agent 实验项目。它不是 Cursor，也不是 Codex，只是一个命令行里的 TypeScript 程序：用户输入一个任务，模型决定要不要读文件、搜索代码、修改文件、跑测试，然后一步步把事情做完。
+
+一开始我以为重点会是模型有多聪明。做下来才发现，真正难的地方不在模型，而在工具设计、权限边界和执行流程。模型只是负责判断下一步，系统要负责保证它只能在正确的边界里行动。
+
+这篇文章记录一下这条学习路线。不是完整教程，更像一次从小 demo 慢慢长成 agent runtime 的工程笔记。
+
+## 第一步：先把 Agent Loop 跑起来
+
+最小的 agent loop 长这样：
+
+```text
+用户输入任务
+-> 模型生成下一步
+-> 如果需要工具，就调用工具
+-> 工具返回结果
+-> 模型继续判断
+-> 直到输出最终结果
+```
+
+在代码里，对应的是：
+
+```ts
+streamText({
+  model,
+  system,
+  prompt,
+  tools,
+  stopWhen,
+});
+```
+
+这里最重要的不是写了多少工具，而是先看到模型和工具之间的闭环。
+
+比如用户说：
+
+```text
+请分析这个项目
+```
+
+模型可能会先调用 `listFiles`，再调用 `readFile` 读取 `package.json`，然后根据真实文件内容回答。
+
+这一步要先记住一个原则：**不要让模型凭空猜项目结构。** 它需要信息，就让它调用工具拿真实信息。
+
+## 第二步：从只读工具开始
+
+一开始不要急着让 agent 改代码。先做只读能力：
+
+```text
+listFiles
+readFile
+searchFiles
+```
+
+这三个工具能覆盖很多基础任务：
+
+```text
+看项目结构
+读配置文件
+找某个函数在哪里用到
+理解入口文件
+解释项目怎么运行
+```
+
+为什么不直接让模型用 `ls`、`cat`、`rg`？
+
+因为原生命令太灵活。灵活意味着难控制。比如 `cat package.json` 看起来没问题，但同一个能力也可以变成：
+
+```bash
+cat ~/.ssh/id_rsa
+```
+
+所以更好的设计是：
+
+```text
+读文件 -> readFile
+列文件 -> listFiles
+搜索代码 -> searchFiles
+```
+
+专用工具的好处是输入结构清楚，输出结构稳定，也更容易加安全检查。
+
+## 第三步：项目路径沙箱
+
+只读工具做出来以后，很快会遇到一个问题：如果 `readFile` 可以读任意路径，那 agent 就可能读到项目外的敏感文件。
+
+所以文件工具必须限制在当前项目内。
+
+核心实现思路是：
+
+```text
+1. 获取项目根目录真实路径
+2. 把用户传入的路径转成真实绝对路径
+3. 计算它相对于项目根目录的位置
+4. 如果结果以 .. 开头，说明跑出项目了，拒绝
+```
+
+代码大概是：
+
+```ts
+const root = await realpath(process.cwd());
+const absolutePath = await realpath(path.resolve(root, inputPath));
+const relativePath = path.relative(root, absolutePath);
+
+if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+  throw new Error("Path must stay inside the current project.");
+}
+```
+
+这里用了 `realpath`，不是只用 `path.resolve`。原因是符号链接可能绕过普通路径检查。比如项目里有个链接指向项目外文件，字符串上看起来在项目内，真实路径已经跑出去了。
+
+这个细节很重要。coding agent 的安全边界不能只看路径字符串。
+
+## 第四步：限制 `runCommand`
+
+有了文件沙箱后，我发现另一个绕过方式：模型可以不走 `readFile`，直接用命令读文件。
+
+比如：
+
+```text
+runCommand({ command: "cat /Users/xxx/.ssh/id_rsa" })
+```
+
+这说明只限制文件工具不够。只要 `runCommand` 还能执行 `cat`、`rg`、`node`、`pnpm exec`，它就可能变成后门。
+
+所以 `runCommand` 最后被收紧成只跑固定验证命令：
+
+```text
+pwd
+pnpm test
+pnpm typecheck
+pnpm --version
+```
+
+这一步学到的是：**不要把 shell 当成万能工具交给模型。**
+
+更合理的分层是：
+
+```text
+文件读取 -> readFile
+代码搜索 -> searchFiles
+目录查看 -> listFiles
+项目验证 -> runCommand
+```
+
+每个工具只负责一类事情。
+
+## 第五步：加入 `editFile`
+
+只读能力稳定以后，才开始做写文件能力。
+
+我没有一开始做 `writeFile`。`writeFile` 太粗暴，给一个路径和完整内容，直接覆盖整份文件。模型只要漏掉一段，文件就坏了。
+
+先做的是 `editFile`：
+
+```ts
+{
+  path: string;
+  oldText: string;
+  newText: string;
+}
+```
+
+它的逻辑很简单：
+
+```text
+1. 检查 path 是否可写
+2. 读取文件
+3. 确认 oldText 出现且只出现一次
+4. 替换成 newText
+5. 写回文件
+```
+
+为什么要求 `oldText` 只出现一次？
+
+因为如果一个文件里有很多个：
+
+```ts
+console.log("done");
+```
+
+模型说“把它替换掉”，系统并不知道该改哪一个。要求唯一匹配，可以逼模型提供更精确的上下文。
+
+写操作还要比读操作更严格。项目内文件也不是都能写：
+
+```text
+不能写 .env
+不能写 .git/
+不能写 node_modules/
+不能写 dist/
+不能写 build/
+不能写 .next/
+默认不写 pnpm-lock.yaml
+```
+
+到这一步，agent 已经有了最小修改闭环：
+
+```text
+readFile
+-> editFile
+-> runCommand("pnpm typecheck")
+```
+
+## 第六步：补测试
+
+做到这里，安全边界已经不少了。如果没有测试，后面每次改工具都很容易把边界弄破。
+
+最先加的测试覆盖这些行为：
+
+```text
+runCommand 只能跑固定命令
+项目路径不能逃逸
+符号链接不能逃逸
+敏感文件不能写
+editFile 只能唯一替换
+```
+
+一开始用的是 Node 内置 test runner，后来迁移到了 Vitest。这个选择本身不关键，关键是测试要覆盖行为，而不是实现细节。
+
+比如测试 `editFile`，不需要知道内部怎么 count occurrences，只需要验证：
+
+```text
+oldText 不存在会失败
+oldText 出现多次会失败
+.env 不能写
+正常唯一匹配能改成功
+```
+
+这些测试就是 agent 的护栏。
+
+## 第七步：实现 `applyPatch`
+
+`editFile` 适合小改动，但复杂改动会很难用。比如同时改多个文件、新增文件、删除文件、移动几段代码，这些都更适合 patch。
+
+所以后面加了 `applyPatch`。
+
+它支持一个受限格式：
+
+```diff
+*** Begin Patch
+*** Update File: src/example.ts
+@@
+-old line
++new line
+*** End Patch
+```
+
+也支持：
+
+```diff
+*** Add File: new.txt
++hello
++world
+```
+
+以及：
+
+```diff
+*** Delete File: old.txt
+```
+
+`applyPatch` 最关键的点不是怎么替换文本，而是执行顺序：
+
+```text
+1. 先解析 patch
+2. 找出所有会被改的文件
+3. 先验证所有文件是否可写
+4. 全部验证通过后，再开始写入
+```
+
+这能避免半成功状态。
+
+比如一个 patch 同时修改：
+
+```text
+index.ts
+.env
+```
+
+如果 `.env` 被拒绝，`index.ts` 也不能提前被改掉。否则系统会进入一种很难处理的中间状态。
+
+这一步开始，agent 已经能做真正的多文件修改了。
+
+## 第八步：审批机制
+
+后来我测试了一个任务：
+
+```text
+使用 Vitest 替换现在的测试方案
+```
+
+agent 能改 `package.json`，也能改测试文件，但它不能执行：
+
+```bash
+pnpm install
+```
+
+因为 `runCommand` 被限制了。
+
+这暴露了一个真实问题：有些操作不是绝对不能做，但也不能让模型静默执行。比如：
+
+```text
+安装依赖
+删除文件
+改 lockfile
+执行 git 命令
+访问网络
+```
+
+所以加了一个新的工具：
+
+```text
+runApprovedCommand
+```
+
+它只允许少数可审批命令：
+
+```text
+pnpm install
+pnpm add ...
+pnpm remove ...
+```
+
+执行前会问用户：
+
+```text
+Approval required
+Command: pnpm add -D vitest
+Reason: install test framework
+Allow this command? [y/N]
+```
+
+用户输入 `y` 才执行。
+
+这样权限模型就变成三层：
+
+```text
+低风险：自动执行
+中风险：用户批准
+高风险：直接拒绝
+```
+
+这是 coding agent 很重要的一步。没有审批机制，agent 要么太弱，什么都不能做；要么太危险，什么都能做。
+
+## 第九步：让 Agent 能看自己的 diff
+
+agent 改完代码以后，还需要知道自己到底改了什么。
+
+如果只靠模型记忆，很容易漏掉文件。更可靠的方式是提供一个只读工具：
+
+```text
+getDiff
+```
+
+支持三种模式：
+
+```text
+stat      -> git diff --stat
+name-only -> git diff --name-only
+full      -> git diff
+```
+
+它不会开放通用 `git`，只允许看 diff。
+
+这样修改后的流程更完整：
+
+```text
+读代码
+-> 改代码
+-> 跑测试
+-> getDiff
+-> 总结改动
+```
+
+`getDiff` 的意义不是功能多强，而是让 agent 的最终总结有事实依据。
+
+## 第十步：拆测试
+
+随着工具越来越多，测试文件也开始变大。最初所有测试都堆在：
+
+```text
+tests/tools.test.ts
+```
+
+后来拆成：
+
+```text
+tests/
+  helpers/
+    temp-project.ts
+  apply-patch.test.ts
+  edit-file.test.ts
+  get-diff.test.ts
+  project-path.test.ts
+  run-approved-command.test.ts
+  safety.test.ts
+```
+
+这个拆分不改变行为，只是让测试结构跟源码模块对齐。
+
+这也是一个很普通但很重要的工程动作：代码一开始可以简单放一起，等边界长出来，再按职责拆。
+
+## 这条路线的主线
+
+回头看，这条路线其实很清楚：
+
+```text
+agent loop
+-> read tools
+-> path sandbox
+-> restricted command
+-> editFile
+-> tests
+-> applyPatch
+-> approval workflow
+-> getDiff
+-> modular tests
+```
+
+每一步都不是为了堆功能，而是为了解决前一步暴露出来的问题。
+
+比如：
+
+```text
+有 readFile，就要有路径沙箱
+有 runCommand，就要防 shell 绕过
+有 editFile，就要有写权限策略
+有 applyPatch，就要先验证所有 touched files
+有依赖安装需求，就要审批机制
+有代码修改，就要 getDiff
+测试变大了，就要拆文件
+```
+
+这比一开始设计一个庞大的 agent framework 更稳。
+
+## 我现在对 Coding Agent 的理解
+
+coding agent 不只是模型加几个工具。
+
+更准确地说，它是一个受控执行系统：
+
+```text
+模型负责判断下一步
+工具负责执行具体动作
+runtime 负责权限、日志、审批和停止条件
+测试负责保证边界不会退化
+```
+
+模型可以不稳定，但工具边界不能不稳定。
+
+如果 agent 能跑 shell、读文件、改代码，那安全限制就不是附加功能。没有边界的 agent，很容易把一次普通任务变成事故。
+
+这也是这个小项目最有价值的地方。它没有复杂 UI，也没有花哨功能，但把 coding agent 最核心的几件事都摸了一遍：
+
+```text
+怎么让模型调用工具
+怎么限制工具
+怎么让工具组合成工作流
+怎么让修改可验证
+怎么让高风险操作经过人
+```
+
+后面可以继续做的东西还有很多：
+
+```text
+更好的审批 UI
+自动 diff summary
+git commit workflow
+PR workflow
+任务日志
+更完整的 patch parser
+工具调用状态跟踪
+```
+
+但到这里，一个 coding agent 的骨架已经出来了。它还很小，不过方向是对的。

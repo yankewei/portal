@@ -1,5 +1,6 @@
 {
   "pages": [
+    "building-a-coding-agent-from-scratch",
     "laravel-batch-job-deletewhenmissingmodels-issue"
   ]
 }
