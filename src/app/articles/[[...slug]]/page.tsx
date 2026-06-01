@@ -10,7 +10,6 @@ import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { getMDXComponents } from '@/mdx-components';
 import GiscusComments from '@/components/giscus-comments';
 
-
 export default async function Page(props: {
   params: Promise<{ slug?: string[] }>;
 }) {
@@ -48,9 +47,24 @@ export async function generateMetadata(props: {
   const params = await props.params;
   const page = source.getPage(params.slug);
   if (!page) notFound();
+  const description = page.data.description ?? `${page.data.title}。Kewei Yan 的技术文章。`;
 
   return {
     title: page.data.title,
-    description: page.data.description,
+    description,
+    alternates: {
+      canonical: page.url,
+    },
+    openGraph: {
+      type: params.slug?.length ? 'article' : 'website',
+      title: page.data.title,
+      description,
+      url: page.url,
+    },
+    twitter: {
+      card: 'summary',
+      title: page.data.title,
+      description,
+    },
   };
 }

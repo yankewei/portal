@@ -1,3 +1,43 @@
 @import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/dusk.css';
 @import 'fumadocs-ui/css/preset.css';
+
+@theme {
+  --font-sans: 'Avenir Next', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+}
+
+body,
+#nd-nav {
+  background-color: rgb(246 243 237 / 0.9);
+}
+
+#nd-nav {
+  border-color: rgb(214 211 209 / 0.85);
+}
+
+.personal-home {
+  background-color: #f6f3ed;
+  background-image:
+    linear-gradient(rgba(120, 113, 108, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 113, 108, 0.04) 1px, transparent 1px);
+  background-position: center;
+  background-size: 44px 44px;
+}
+
+.dark body,
+.dark #nd-nav {
+  background-color: rgb(28 25 23 / 0.9);
+}
+
+.dark #nd-nav {
+  border-color: rgb(68 64 60 / 0.85);
+}
+
+.dark .personal-home {
+  background-color: #1c1917;
+  background-image:
+    linear-gradient(rgba(168, 162, 158, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 162, 158, 0.04) 1px, transparent 1px);
+}
