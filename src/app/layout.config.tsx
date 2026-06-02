@@ -10,7 +10,7 @@ export const baseOptions: BaseLayoutProps = {
   },
   githubUrl: 'https://github.com/yankewei',
   links: [
-    { text: 'About', url: '/#about' },
+    { text: 'Home', url: '/#about' },
     { text: 'Apps', url: '/apps' },
     { text: 'Writing', url: '/articles' },
   ],

@@ -88,7 +88,7 @@ function ArrowIcon() {
 
 export default function HomePage() {
   return (
-    <main className="personal-home flex flex-1 flex-col text-stone-900 dark:text-stone-100">
+    <main className="personal-home flex flex-col text-stone-900 dark:text-stone-100">
       <script
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         type="application/ld+json"
