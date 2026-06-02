@@ -9,7 +9,7 @@ This is a personal blog/homepage built with Astro and AstroPaper, belonging to K
 - **Theme**: AstroPaper v6 (minimal, responsive, SEO-friendly blog theme)
 - **Styling**: Tailwind CSS 4.3.0
 - **Language**: TypeScript 6.0.3
-- **Package Manager**: Bun
+- **Package Manager**: pnpm
 
 ## Project Structure
 ```
@@ -50,14 +50,14 @@ This is a personal blog/homepage built with Astro and AstroPaper, belonging to K
 - **System Architecture**: Job queues, background processing
 
 ## Development Commands
-- `npm run dev` - Start development server
-- `npm run build` - Build for production (includes PageFind indexing)
-- `npm run preview` - Preview production build
-- `npm run format` - Format code with Prettier
-- `npm run lint` - Lint with ESLint
+- `pnpm run dev` - Start development server
+- `pnpm run build` - Build for production (includes PageFind indexing)
+- `pnpm run preview` - Preview production build
+- `pnpm run format` - Format code with Prettier
+- `pnpm run lint` - Lint with ESLint
 
 ## Author Information
-- **Name**: Kewei Yan (闫可维)
+- **Name**: Kewei Yan
 - **Role**: Software Engineer
 - **Expertise**: PHP, Redis, Laravel, learning Rust
 - **Language**: Articles primarily in Chinese

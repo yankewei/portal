@@ -3,7 +3,7 @@ title: "关于"
 description: "关于 Kewei Yan 和这个博客。"
 ---
 
-我是 **Kewei Yan**（闫可维），一名后端工程师。
+我是 **Kewei Yan**，一名后端工程师。
 
 主要使用 **PHP**，关注 **Redis** 与 **Laravel** 内部实现。最近在用 **Rust** 和 **Mago** 探索更可靠的工程工具，也为自己的日常工作做一些 macOS 应用。
 
