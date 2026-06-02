@@ -1,0 +1,123 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Main from "@/components/Main.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import config from "@/config";
+
+const keyDock = {
+  name: 'Key Dock',
+  platform: 'macOS',
+  category: 'Developer Utility',
+  description: '把 API 密钥留在系统钥匙串里，而不是散落在配置文件和聊天记录中。',
+  detail: 'Key Dock 是一款面向开发者的 macOS 凭证管理工具。它使用 Keychain 保存密钥，支持身份验证、自动锁定、凭证状态检查和 iCloud 同步。',
+  icon: '/image/apps/key-dock.png',
+  downloadUrl: 'https://github.com/yankewei/keydock-release/releases/latest',
+  requirements: 'macOS 14.0 Sonoma 或更高版本',
+  features: [
+    '使用 macOS Keychain 或 iCloud Keychain 存储密钥',
+    '通过 Touch ID 或系统密码解锁敏感信息',
+    '按提供商管理凭证，并主动检查密钥状态',
+    '使用可配置的自动锁定时间减少凭证暴露',
+  ],
+  providers: [
+    'OpenAI',
+    'Anthropic',
+    'Google Gemini',
+    'DeepSeek',
+    'Kimi Code',
+    'Moonshot',
+    'OpenRouter',
+    'Vercel AI Gateway',
+    'Custom Gateway',
+  ],
+};
+---
+
+<Layout
+  title={`${keyDock.name} | ${config.site.title}`}
+  description={keyDock.detail}
+>
+  <Header />
+  <Breadcrumb />
+  <Main pageTitle={keyDock.name}>
+    <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
+      <img
+        src={keyDock.icon}
+        alt={`${keyDock.name} icon`}
+        width="96"
+        height="96"
+        class="h-24 w-24 rounded-2xl"
+      />
+      <div>
+        <p class="text-muted-foreground text-sm">
+          {keyDock.platform} · {keyDock.category}
+        </p>
+        <p class="mt-3 text-lg text-foreground/90">{keyDock.detail}</p>
+        <div class="mt-6 flex flex-wrap items-center gap-4">
+          <a
+            href={keyDock.downloadUrl}
+            target="_blank"
+            rel="noreferrer"
+            class="bg-accent text-accent-foreground hover:bg-accent/90 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors"
+          >
+            下载最新版 ↗
+          </a>
+          <span class="text-muted-foreground text-sm">
+            {keyDock.requirements}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="border-border my-8" />
+
+    <h2 class="text-xl font-semibold">核心功能</h2>
+    <ul class="mt-4 space-y-3">
+      {keyDock.features.map((feature, index) => (
+        <li class="flex gap-3">
+          <span class="text-accent text-sm font-mono">{String(index + 1).padStart(2, '0')}</span>
+          <span class="text-foreground/80 text-sm">{feature}</span>
+        </li>
+      ))}
+    </ul>
+
+    <hr class="border-border my-8" />
+
+    <h2 class="text-xl font-semibold">支持的服务</h2>
+    <p class="mt-2 text-sm text-foreground/70">
+      当前版本已经覆盖常用模型服务，也允许添加自定义 Gateway。
+    </p>
+    <ul class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      {keyDock.providers.map((provider, index) => (
+        <li class="flex items-center gap-2 border-border border-b py-2 text-sm">
+          <span class="text-accent font-mono text-xs">{String(index + 1).padStart(2, '0')}</span>
+          {provider}
+        </li>
+      ))}
+    </ul>
+
+    <hr class="border-border my-8" />
+
+    <h2 class="text-xl font-semibold">隐私设计</h2>
+    <p class="mt-2 text-sm text-foreground/80">
+      密钥存储使用 macOS Keychain 或 iCloud Keychain。查看敏感内容前需要通过 Touch ID 或系统密码验证，自动锁定时间可以在应用内配置。
+    </p>
+    <div class="mt-4 flex flex-wrap gap-3 text-xs font-medium text-foreground/60">
+      <span>Keychain storage</span>
+      <span>Device authentication</span>
+      <span>Configurable auto-lock</span>
+    </div>
+
+    <hr class="border-border my-8" />
+
+    <p class="text-sm text-foreground/60">
+      问题反馈或支持：
+      <a href="mailto:yankewei1993@gmail.com?subject=Key%20Dock%20Support" class="text-accent hover:underline">
+        yankewei1993@gmail.com
+      </a>
+    </p>
+  </Main>
+  <Footer />
+</Layout>

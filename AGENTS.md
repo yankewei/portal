@@ -1,42 +1,47 @@
+<!-- From: /Users/yankewei/Documents/Github/portal/AGENTS.md -->
 # Kewei Yan's Personal Blog
 
 ## Project Overview
-This is a personal blog/homepage built with Next.js and Fumadocs, belonging to Kewei Yan - a software engineer who writes technical articles primarily in Chinese about PHP, Redis, and Rust.
+This is a personal blog/homepage built with Astro and AstroPaper, belonging to Kewei Yan - a software engineer who writes technical articles primarily in Chinese about PHP, Redis, and Rust.
 
 ## Technology Stack
-- **Framework**: Next.js 15.3.1 with React 19.1.0
-- **Documentation Engine**: Fumadocs UI/Core (15.3.1) and Fumadocs MDX (11.6.3)
-- **Styling**: Tailwind CSS 4.1.5
-- **Language**: TypeScript 5.8.3
-- **Package Manager**: Bun (based on bun.lock presence)
+- **Framework**: Astro 6.4.2
+- **Theme**: AstroPaper v6 (minimal, responsive, SEO-friendly blog theme)
+- **Styling**: Tailwind CSS 4.3.0
+- **Language**: TypeScript 6.0.3
+- **Package Manager**: Bun
 
 ## Project Structure
 ```
-├── content/articles/           # Blog articles organized by year
-│   ├── (2024)/                # 2024 articles (PHP, Redis topics)
-│   ├── (2025)/                # 2025 articles (Laravel, PHP, Rust)
-│   ├── index.mdx              # Articles index page
-│   └── meta.json              # Navigation metadata
 ├── src/
-│   ├── app/                   # Next.js App Router
-│   │   ├── (home)/           # Homepage layout and content
-│   │   ├── articles/         # Article pages with dynamic routing
-│   │   ├── privacy/          # Privacy pages
-│   │   ├── support/          # Support pages
-│   │   └── api/search/       # Search API endpoint
-│   ├── lib/                  # Utility libraries
-│   └── mdx-components.tsx    # MDX component customizations
-├── public/image/             # Static assets (logos, diagrams)
-└── [config files]           # Next.js, TypeScript, Tailwind configs
+│   ├── assets/              # Icons and images
+│   ├── components/          # Reusable Astro components
+│   ├── content/
+│   │   ├── posts/          # Blog articles
+│   │   └── pages/          # Static pages (about, etc.)
+│   ├── i18n/               # Internationalization (zh, en)
+│   ├── layouts/            # Page layouts
+│   ├── pages/              # Astro routes
+│   ├── scripts/            # Theme toggle script
+│   ├── styles/             # Global CSS
+│   ├── types/              # TypeScript types
+│   └── utils/              # Utility functions
+├── public/                 # Static assets
+│   └── image/             # Blog images and app icons
+├── astro-paper.config.ts   # Theme configuration
+├── astro.config.ts         # Astro configuration
+└── [config files]         # TypeScript, ESLint, Prettier configs
 ```
 
 ## Key Features
-1. **Bilingual Content**: Homepage in English, articles primarily in Chinese
+1. **Bilingual Content**: Homepage in Chinese, articles primarily in Chinese
 2. **Technical Blog**: Focus on backend technologies (PHP, Redis, Laravel, Rust)
-3. **Fumadocs Integration**: Professional documentation-style blog layout
-4. **Search Functionality**: Built-in search API for articles
+3. **AstroPaper Integration**: Professional blog layout with dark/light mode
+4. **Search Functionality**: Static search with PageFind
 5. **MDX Support**: Rich content with embedded components
-6. **Mobile Apps**: Has a lunar calendar app "初一到十五" mentioned in privacy/support pages
+6. **Dynamic OG Images**: Automatic social image generation
+7. **RSS Feed**: Built-in RSS feed generation
+8. **Mobile Apps**: Has a lunar calendar app "初一到十五" mentioned in privacy/support pages
 
 ## Content Categories
 - **PHP Development**: JSON handling, array functions, Laravel internals
@@ -45,10 +50,11 @@ This is a personal blog/homepage built with Next.js and Fumadocs, belonging to K
 - **System Architecture**: Job queues, background processing
 
 ## Development Commands
-- `npm run dev` - Start development server with Turbo
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run postinstall` - Process MDX files with Fumadocs
+- `npm run dev` - Start development server
+- `npm run build` - Build for production (includes PageFind indexing)
+- `npm run preview` - Preview production build
+- `npm run format` - Format code with Prettier
+- `npm run lint` - Lint with ESLint
 
 ## Author Information
 - **Name**: Kewei Yan (闫可维)
@@ -58,20 +64,21 @@ This is a personal blog/homepage built with Next.js and Fumadocs, belonging to K
 - **Website**: Personal homepage with professional introduction
 
 ## Special Configurations
-- **Rewrites**: `.mdx` files are rewritten to `/llms.mdx/` endpoints for better SEO
-- **Path Aliases**: `@/*` maps to `src/*`, `@/.source` for generated content
-- **Git Integration**: Last modified time sourced from Git commits
-- **Strict TypeScript**: Full type checking enabled
+- **Language**: Chinese (zh) as default locale
+- **Timezone**: Asia/Shanghai
+- **Path Aliases**: `@/*` maps to `src/*`
+- **Edit Links**: Posts link to GitHub edit page
+- **Social Links**: GitHub, Email
 
-## Recent Activity
-- Active development on Rust learning content
-- Regular PHP and Laravel technical articles
-- Redis internals exploration
-- Mobile app development (lunar calendar app "初一到十五")
+## Custom Pages
+- **Homepage**: Personal intro + recent posts
+- **Apps**: List of macOS applications (Key Dock)
+- **Apps/Key Dock**: Detailed app page with download link
+- **About**: Personal bio and blog description
 
 ## Notes for Development
-- Content is managed through MDX files in `content/articles/`
-- Navigation structure defined in `meta.json` files
-- Fumadocs handles content processing and routing
-- Articles support frontmatter for metadata (title, draft status, etc.)
-- Uses modern Next.js App Router with React Server Components
+- Content is managed through MDX/MD files in `src/content/posts/`
+- Posts require frontmatter: title, pubDatetime, description, tags
+- Draft posts are excluded from production builds
+- PageFind indexes content automatically during build
+- Uses modern Astro features: ClientRouter, font optimization, SVG optimization

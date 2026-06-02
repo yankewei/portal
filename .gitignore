@@ -8,7 +8,7 @@
 
 # test & build
 /coverage
-/.next/
+/dist/
 /out/
 /build
 *.tsbuildinfo
@@ -25,4 +25,6 @@ yarn-error.log*
 # others
 .env*.local
 .vercel
-next-env.d.ts
+
+# astro
+.astro/

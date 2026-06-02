@@ -1,0 +1,59 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Main from "@/components/Main.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import config from "@/config";
+---
+
+<Layout
+  title={`Apps | ${config.site.title}`}
+  description="Kewei Yan 开发的 macOS 应用与个人工具。"
+>
+  <Header />
+  <Breadcrumb />
+  <Main pageTitle="Apps">
+    <p class="mb-8">
+      除了写文章，我也会做一些解决自己问题的应用。它们从真实使用场景开始，尽量保持功能明确、界面克制。
+    </p>
+
+    <div class="border-border rounded-lg border p-6">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <img
+          src="/image/apps/key-dock.png"
+          alt="Key Dock icon"
+          width="64"
+          height="64"
+          class="h-16 w-16 rounded-xl"
+        />
+        <div class="flex-1">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="text-xl font-semibold">
+              <a href="/apps/key-dock" class="text-accent hover:underline">
+                Key Dock
+              </a>
+            </h2>
+            <span class="text-muted-foreground text-sm">
+              macOS · Developer Utility
+            </span>
+          </div>
+          <p class="mt-2 text-sm text-foreground/80">
+            把 API 密钥留在系统钥匙串里，而不是散落在配置文件和聊天记录中。
+          </p>
+        </div>
+        <a
+          href="/apps/key-dock"
+          class="text-accent hover:underline text-sm font-medium whitespace-nowrap"
+        >
+          了解详情 →
+        </a>
+      </div>
+    </div>
+
+    <p class="mt-8 text-sm text-foreground/60">
+      新应用会继续加入这里。每个应用都会有独立页面，用于说明用途、设计取舍和下载方式。
+    </p>
+  </Main>
+  <Footer />
+</Layout>

@@ -1,0 +1,215 @@
+---
+title: 🚀 PHP 8.5 新特性：管道符 |> 终于来了，用过都说爽！
+pubDatetime: 2025-10-12T10:00:00+08:00
+modDatetime: 2025-10-12T10:00:00+08:00
+description: "PHP 8.5 新特性管道符 |>，让你的代码像读自然语言一样流畅，彻底告别嵌套地狱。"
+draft: false
+tags:
+  - PHP
+---
+
+> **一句话总结：**  
+> `|>` 是“小语法，大能量”。它让你的代码像读自然语言一样流畅，彻底告别嵌套地狱。
+
+---
+
+## 💡 TL;DR（看这一节就够）
+
+- `|>` 把左侧表达式的值，**作为参数传给右侧的函数或 callable**。  
+- 关键意义不在“能不能写”，而在于 **可读性与链式组合能力**。  
+- 它与 **一等可调用（first-class callables）** 配合得天衣无缝。  
+- 这一特性经历了多轮提案、取舍和改进，终于在 **PHP 8.5 正式落地**。  
+
+---
+
+## 🧩 1. 它到底是什么？
+
+语法一眼就懂：
+
+```php
+$result = "Hello World" |> strlen(...);
+// 等价于
+$result = strlen("Hello World");
+```
+
+真正的威力来自“链式管道”：
+
+```php
+$arr = [
+  new Widget(tags: ['a','b','c']),
+  new Widget(tags: ['c','d','e']),
+  new Widget(tags: ['x','y','a']),
+];
+
+$result = $arr
+  |> fn($x) => array_column($x, 'tags')
+  |> fn($x) => array_merge(...$x)
+  |> array_unique(...)
+  |> array_values(...);
+
+// 结果：['a','b','c','d','e','x','y']
+```
+
+对比没有管道时的写法：
+
+```php
+array_values(array_unique(array_merge(...array_column($arr,'tags'))));
+```
+
+是不是瞬间“读不下去”？  
+有了 `|>`，这类“流水线式”的逻辑终于能**自然顺眼**地写出来。  
+
+---
+
+## 🧠 2. 和命令行的 `|` 有点像？
+
+是的，**思想一致**：左边的输出就是右边的输入。  
+不同的是，PHP 的管道右侧是 **callable**，搭配 `(... )` 的一等可调用语法，非常顺手。
+
+---
+
+## 🕰️ 3. 为什么现在才有？
+
+简单回顾一下历程：
+
+- **2016**：Sara Golemon 提过把 Hack/HHVM 的管道语法搬来 PHP，但语法太特立独行，未通过。  
+- **2020/2021**：社区转向“偏函数应用（PFA）”与“一等可调用”，后者率先落地。  
+- **2025**：在 PHP Foundation 团队（Ilija Tovilo、Arnaud Le Blanc）推动下，第三次提案终于通过。
+
+---
+
+## ⚙️ 4. 不止“更好看”：它能叠加增益！
+
+### ✅ 在 `match` 中更优雅
+
+```php
+$newString = match ($format) {
+  'snake_case' => $string
+      |> splitString(...)
+      |> fn($x) => implode('_', $x)
+      |> strtolower(...),
+
+  'lowerCamel' => $string
+      |> splitString(...)
+      |> fn($x) => array_map(ucfirst(...), $x)
+      |> fn($x) => implode('', $x)
+      |> lcfirst(...),
+};
+```
+
+单表达式写法，逻辑顺、无中间变量，看得也舒服。
+
+---
+
+### ✅ 像扩展方法一样链式写
+
+如果右边是返回闭包的函数，就能像扩展方法一样继续链下去。  
+更自由，不局限于语言内置方法。
+
+---
+
+### ✅ “空值安全”的 Maybe 风格
+
+```php
+function maybe(\Closure $c): \Closure {
+  return fn(mixed $arg) => $arg === null ? null : $c($arg);
+}
+
+$profit = [1,4,5]
+  |> maybe(loadSeveral(...))
+  |> maybe(filter(isOnSale(...)))
+  |> maybe(map(sellWidget(...)))
+  |> maybe(array_sum(...));
+```
+
+这几行其实就是一个迷你版的 **Maybe Monad**，让整条链天然空值安全。
+
+---
+
+## 🧩 5. 和“标量方法”有啥不同？
+
+两者目标相似：都让链式处理更顺滑。  
+区别在于：  
+- 标量方法是 PHP 官方定义的一小撮。  
+- `|>` 则是通用语法，**任意函数都能参与管道**。
+
+---
+
+## ⚠️ 6. 有哪些注意点？
+
+- **右侧必须是 callable**。常见写法是 `fn($x) => ...` 或 `strlen(...)`。  
+- **多参数函数怎么办？**  
+  - 临时方案：`fn($x) => some($x, $other)`  
+  - 理想方案：等 **偏函数应用 PFA** 落地（进行中 👀）
+
+---
+
+## 🔭 7. 接下来：PFA 与函数组合操作符
+
+- **偏函数应用（PFA）**：允许用 `?` 占位来“部分应用”函数，比如：
+
+```php
+some_func(?, 5, ?, 3)
+```
+
+它将和 `|>` 成为完美搭档。  
+
+- **函数组合操作符**：用于合成新函数（比如把多次 `map()` 合并）。  
+  预计在 **PHP 8.6** 登场。
+
+---
+
+## 🧰 8. 落地建议（给团队）
+
+1. 优先改写嵌套最深的 array_/str_ 表达式。  
+2. 引入“函数工具箱”：如返回闭包的 `map(fn)` / `filter(fn)`。  
+3. 约定：带额外参数时用 `fn($x) => ...` 包裹，未来可替换为 PFA。  
+4. 尽量在 `match`、三元、数组构造等场景保持“单表达式纯度”。  
+5. 制作一页团队内部 **Cheatsheet**（旧写法 → 管道写法）。
+
+---
+
+## 🧮 9. 示例速记（可贴 Wiki）
+
+**数组统计：**
+
+```php
+$total = $orders
+  |> fn($x) => array_map(getAmount(...), $x)
+  |> array_sum(...);
+```
+
+**字符串格式化：**
+
+```php
+$slug = $title
+  |> trim(...)
+  |> strtolower(...)
+  |> fn($x) => preg_replace('/\s+/', '-', $x);
+```
+
+**match 里的数据清洗：**
+
+```php
+$val = match(true) {
+  $isCsv  => $raw |> parseCsv(...),
+  $isJson => $raw |> json_decode(..., associative: true),
+  default => [],
+};
+```
+
+---
+
+## ✍️ 最后一句话
+
+> `|>` 是 PHP 8.5 最值得尝试的新特性。  
+> 它让你的代码从“嵌套地狱”走向“语义流畅”，  
+> 是一次让 PHP 真正读起来像人话的进化。  
+
+---
+
+## 📚 参考来源
+
+- The PHP Foundation：《PHP 8.5 Adds Pipe Operator: What it means》（2025-07-11）
+
+---
