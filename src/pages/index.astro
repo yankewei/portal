@@ -76,36 +76,71 @@ const homePath = getRelativeLocaleUrl(locale, "");
       class="border-border border-b pt-12 pb-6"
     >
       <h2 class="text-2xl font-semibold tracking-wide">App</h2>
-      <div class="border-border mt-6 rounded-lg border p-5 sm:p-6">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
-          <img
-            src="/image/apps/key-dock.png"
-            alt="Key Dock icon"
-            width="56"
-            height="56"
-            class="h-14 w-14 rounded-xl"
-          />
-          <div class="flex-1">
-            <div class="flex flex-wrap items-center gap-2">
-              <h3 class="text-lg font-semibold">
-                <a href="/apps/key-dock" class="text-accent hover:underline">
-                  Key Dock
-                </a>
-              </h3>
-              <span class="text-muted-foreground text-xs">
-                macOS · Developer Utility
-              </span>
+      <div class="mt-6 flex flex-col gap-4">
+        <div class="border-border rounded-lg border p-5 sm:p-6">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <img
+              src="/image/apps/qdii-watch.png"
+              alt="QDII Watch icon"
+              width="56"
+              height="56"
+              class="h-14 w-14 rounded-xl"
+            />
+            <div class="flex-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <h3 class="text-lg font-semibold">
+                  <a href="/apps/qdii-watch" class="text-accent hover:underline">
+                    QDII Watch
+                  </a>
+                </h3>
+                <span class="text-muted-foreground text-xs">
+                  Web · Investment Tool
+                </span>
+              </div>
+              <p class="mt-1 text-sm text-foreground/80">
+                监控中国大陆纳斯达克100 ETF联接基金（QDII）的申购限额情况。
+              </p>
             </div>
-            <p class="mt-1 text-sm text-foreground/80">
-              把 API 密钥留在系统钥匙串里，而不是散落在配置文件和聊天记录中。
-            </p>
+            <a
+              href="/apps/qdii-watch"
+              class="text-accent hover:underline text-sm font-medium whitespace-nowrap"
+            >
+              了解详情 →
+            </a>
           </div>
-          <a
-            href="/apps/key-dock"
-            class="text-accent hover:underline text-sm font-medium whitespace-nowrap"
-          >
-            了解详情 →
-          </a>
+        </div>
+
+        <div class="border-border rounded-lg border p-5 sm:p-6">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <img
+              src="/image/apps/key-dock.png"
+              alt="Key Dock icon"
+              width="56"
+              height="56"
+              class="h-14 w-14 rounded-xl"
+            />
+            <div class="flex-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <h3 class="text-lg font-semibold">
+                  <a href="/apps/key-dock" class="text-accent hover:underline">
+                    Key Dock
+                  </a>
+                </h3>
+                <span class="text-muted-foreground text-xs">
+                  macOS · Developer Utility
+                </span>
+              </div>
+              <p class="mt-1 text-sm text-foreground/80">
+                把 API 密钥留在系统钥匙串里，而不是散落在配置文件和聊天记录中。
+              </p>
+            </div>
+            <a
+              href="/apps/key-dock"
+              class="text-accent hover:underline text-sm font-medium whitespace-nowrap"
+            >
+              了解详情 →
+            </a>
+          </div>
         </div>
       </div>
     </section>
