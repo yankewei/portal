@@ -1,0 +1,273 @@
+---
+title: webpack、Vite、Rollup、Rolldown、esbuild、Rspack、Turbopack 到底有什么区别
+pubDatetime: 2026-06-12T10:00:00+08:00
+modDatetime: 2026-06-12T10:00:00+08:00
+description: 用 AI 写前端代码时，配置文件里经常蹦出各种打包器名字。这篇文章把 webpack、Vite、Rollup、Rolldown、esbuild、Rspack、Turbopack 放在一起讲清楚：它们为什么存在、历史渊源、各自擅长什么，以及怎么分类记忆。
+draft: false
+tags:
+  - Frontend
+  - Bundler
+---
+
+用 AI 生成前端项目的时候，你经常会看到配置文件里出现各种打包器：webpack、Vite、Rollup、esbuild、Rspack、Rolldown、Turbopack……
+
+它们名字长得差不多，功能也好像都是"把代码打包起来"，但彼此之间并不是简单的"谁比谁新"的关系。这篇文章试着把它们说清楚，让你下次看到 `vite.config.ts` 或者 `next.config.js` 的时候，知道背后在跑什么。
+
+## 为什么需要打包
+
+要理解这些工具，得先回到没有打包器的年代。
+
+### 最早的网页：script 标签时代
+
+十几年前，一个网页通常长这样：
+
+```html
+<script src="jquery.js"></script>
+<script src="jquery-plugin.js"></script>
+<script src="app.js"></script>
+```
+
+代码按顺序加载，jQuery 会把自己挂到全局的 `window.$` 上，后面的脚本直接拿来用。这种写法简单粗暴，但问题也很明显：
+
+- **全局变量污染**：每个库都往 `window` 上挂东西，名字冲突是常态
+- **加载顺序不能错**：如果 `app.js` 比 jQuery 先加载，直接报错
+- **HTTP 请求太多**：每个 `<script>` 都是一次网络请求，几十个文件时页面打开慢得像蜗牛
+
+所以前端工程师开始想办法组织代码。
+
+### 模块化的萌芽：IIFE、AMD、CommonJS
+
+最早出现的是 **IIFE（立即执行函数表达式）**：
+
+```js
+(function () {
+  // 代码写在这里，不会污染全局
+})();
+```
+
+它能把变量关在一个函数作用域里，但还没解决"模块之间怎么依赖"的问题。
+
+后来浏览器端出现了 **AMD**（代表作是 RequireJS），写法大概是这样：
+
+```js
+define(["jquery"], function ($) {
+  // 依赖 jQuery，加载完再执行
+});
+```
+
+同一时间，Node.js 选择了 **CommonJS**：
+
+```js
+const fs = require("fs");
+module.exports = something;
+```
+
+问题是：浏览器不认识 `require`，Node.js 也不直接跑 `define`。同一个项目里可能出现好几种模块规范混用，非常头疼。
+
+于是又有人发明了 **UMD**，试图写一段同时兼容 AMD、CommonJS 和全局变量的代码。UMD 很巧妙，但本质上是个折中方案，没有从根本上解决问题。
+
+### npm 爆发带来的新麻烦
+
+2010 年以后，npm 上的包数量爆炸式增长。一个前端项目动辄依赖几十上百个包，这些包自己还依赖别的包。
+
+如果每个包都用 `<script>` 标签引入，页面要加载几百个文件，而且版本冲突、加载顺序根本管不过来。比如 `lodash` 依赖了一个版本的 `underscore`，另一个库又依赖了另一个版本，手动处理这种关系几乎不可能。
+
+所以前端迫切需要一种自动化的方式：
+
+- 分析所有文件的依赖关系
+- 把分散的代码合并成少量文件
+- 处理不同模块规范
+- 压缩、优化、去重
+
+这就是打包器（bundler）出现的直接原因。
+
+### 浏览器不会跑你的"现代代码"
+
+除了模块问题，还有一个更现实的障碍：浏览器跟不上语言发展的速度。
+
+你可能写 TypeScript、JSX、Vue 单文件、ES6+ 语法，但浏览器只认最基础的 JavaScript。打包器要负责把这些东西"翻译"成浏览器能运行的代码，这个过程叫转译（transpile）或编译（compile）。
+
+另外，现代工程化还有很多优化需求：
+
+- **Tree Shaking**：删掉没用到的代码，减小产物体积
+- **Code Splitting**：把代码拆成多个 chunk，按需加载
+- **懒加载**：用户点开某个页面时才加载对应代码
+- **资源处理**：CSS、图片、字体、JSON 都要能被 `import`
+- **缓存优化**：给文件名加 hash，让浏览器能长期缓存不变的文件
+
+这些工作不可能靠手写完成，必须交给工具。
+
+## 历史渊源：四代打包器是怎么长出来的
+
+前端打包器的发展，大致可以分为四代。每一代都是为了解决上一代留下的痛点。
+
+## 第一代：webpack
+
+webpack 诞生于 2012 年，创始人是 Tobias Koppers。它几乎可以算是现代前端打包器的鼻祖。
+
+在 webpack 之前，主流的工具是 Grunt 和 Gulp。它们更像是"任务执行器"，可以帮你串起一堆脚本：先编译 Sass，再压缩 JS，再复制文件。但它们不是真正的"打包器"，不理解模块之间的依赖关系。
+
+webpack 的革命性在于：它把一切都看成模块。
+
+```js
+import logo from "./logo.png";
+import styles from "./styles.css";
+```
+
+在 webpack 眼里，JS、CSS、图片、字体、JSON 没有本质区别，都可以被 `import`，然后经过 loader 转换、plugin 处理，最终输出成浏览器能用的 bundle。
+
+这种设计极其强大，也极其灵活。你想怎么配就怎么配，几乎没有做不到的事情。但代价是复杂。webpack 的配置文件可以写得像天书一样，随着项目变大，打包速度也会明显下降。
+
+你现在不太会从头新建一个 webpack 项目了，但很多老项目、企业内部系统、以及 Next.js 早期的版本，底层都跑的是 webpack。
+
+一句话记忆：**配置之王，生态最厚，速度一般。**
+
+## 第二代：Rollup
+
+Rollup 比 webpack 晚几年，2015 年发布，作者 Rich Harris 后来还创造了 Svelte。
+
+它的定位很清晰：**为库而生**。
+
+webpack 打包应用很强，但给库打包时有个问题：产物里会夹带很多 webpack 的运行时代码，体积不够干净。Rollup 从设计之初就围绕 ES Module（ESM）展开，所以 Tree Shaking 做得特别好，打包出来的产物通常更小、更接近"手写的 JS"。
+
+很多你熟悉的库，比如 Vue、React、Three.js、D3，它们的源码就是用 Rollup 打包的。
+
+但它不太适合直接构建大型应用。处理 CSS、代码分割、热更新这些能力，Rollup 要么没有原生支持，要么需要插件配合。
+
+一句话记忆：**库打包首选，Tree Shaking 干净，应用构建稍弱。**
+
+## 第三代：esbuild 和 Vite
+
+这一代的出现，主要是因为大家受够了 webpack 的速度。
+
+webpack 和 Rollup 都是 JavaScript 写的。项目大了之后，解析、分析依赖、转译的过程非常耗 CPU。一个大型项目 build 一次可能要几十秒甚至几分钟，开发体验很差。
+
+### esbuild
+
+esbuild 是 Evan Wallace 用 Go 写的，2020 年发布。它的目标只有一个："极致快"。
+
+它的打包速度通常是 webpack 的几十倍甚至上百倍。为了快，它做了不少取舍：插件生态不如 webpack，配置能力也相对简单。
+
+所以它更像一个"高性能的编译/打包引擎"，而不是一个完整的工程化方案。你平时可能不会直接写 `esbuild.config.js`，但它已经藏在了很多工具下面。
+
+一句话记忆：**快到离谱，但功能精简，常作为底层引擎。**
+
+### Vite
+
+Vite 是尤雨溪在 2020 年发布的。它不是想重新发明一个打包器，而是想解决"开发体验"这个具体问题。
+
+Vite 的思路很聪明：**开发时不用打包，直接用浏览器原生 ESM；生产构建时再用 Rollup 打包。**
+
+开发阶段，你改一个文件，浏览器只重新加载这个文件，热更新快到毫秒级。生产阶段，Rollup 负责把东西打成一个一个优化过的 chunk。Vite 内部用 esbuild 做预构建和 TypeScript 转译，进一步加速。
+
+现在新建一个 React、Vue、Svelte 项目，默认大概率就是 Vite。
+
+一句话记忆：**开发体验天花板，底层是 esbuild + Rollup。**
+
+## 第四代：Rust 重写潮
+
+到了 2022 年以后，前端圈子开始流行"用 Rust 重写一切"。
+
+原因是：webpack、Rollup 都是 JS 写的，JS 的执行效率天生比编译型语言低。项目大了之后，光是在内存里解析 AST、做字符串操作就很慢。Rust 可以把这些过程加速很多倍。
+
+这一批新工具的核心卖点几乎都是：**像 webpack/Rollup 一样用，但快得多。**
+
+### Rspack
+
+Rspack 出自字节跳动，定位非常明确：**webpack 的 Rust 替代品**。
+
+它的设计目标是尽量兼容 webpack 的 API 和配置。如果你有一个大型 webpack 项目，迁移到 Rspack 可能只需要改几行配置，打包速度就能快几倍。
+
+它适合那些已经被 webpack"套牢"的团队：不想重写配置，但又想要性能。
+
+一句话记忆：**webpack 的 Rust 加速版，迁移成本低。**
+
+### Rolldown
+
+Rolldown 是 Vite 团队在做的新工具，定位是 **Rollup 的 Rust 替代品**。
+
+Vite 现在生产构建用的是 Rollup（JS 写的），项目大了之后构建速度还是不够快。Rolldown 的目标是用 Rust 重写 Rollup，同时保持 API 兼容。
+
+未来 Vite 可能会把生产构建从 Rollup 换成 Rolldown，但对普通开发者来说配置基本不变。
+
+一句话记忆：**Rollup 的 Rust 加速版，Vite 的未来底层。**
+
+### Turbopack
+
+Turbopack 是 Vercel 给 Next.js 做的打包器，也是 Rust 写的。
+
+它跟 Rspack 有点像，都想替代 webpack。但 Turbopack 更绑定 Next.js 生态，设计目标主要是服务 Next.js 的开发体验和构建性能。
+
+你很少会在非 Next.js 项目里见到 Turbopack。它是框架级别的优化，不是通用工具。
+
+一句话记忆：**Next.js 御用打包器，跟框架绑定最深。**
+
+## 怎么分类记忆
+
+看完上面的来历，可以用几个维度给它们分类。
+
+### 按年代和定位
+
+| 工具 | 年代 | 核心定位 |
+|------|------|----------|
+| webpack | 2012 | 通用应用打包器，配置灵活 |
+| Rollup | 2015 | 库打包器，Tree Shaking 强 |
+| esbuild | 2020 | 极速底层打包引擎 |
+| Vite | 2020 | 开发体验优先的完整方案 |
+| Rspack | 2022 | webpack 的 Rust 替代 |
+| Rolldown | 2023 | Rollup 的 Rust 替代 |
+| Turbopack | 2022 | Next.js 御用打包器 |
+
+### 按实现语言
+
+- **JavaScript**：webpack、Rollup
+- **Go**：esbuild
+- **Rust**：Rspack、Rolldown、Turbopack
+- **混合型**：Vite（开发用 esbuild/Go，生产用 Rollup/JS，未来可能用 Rolldown/Rust）
+
+### 按使用场景
+
+- **大型应用，老项目迁移**：webpack、Rspack
+- **中小型应用，开发体验优先**：Vite
+- **工具库 / 组件库**：Rollup、esbuild、Rolldown
+- **Next.js 项目**：Turbopack（Next.js 默认推进中）
+
+### 按替换关系
+
+可以这样简单记：
+
+```text
+webpack  ← Rspack 替代
+Rollup   ← Rolldown 替代
+Vite     ← 现在用 Rollup，未来可能用 Rolldown
+Next.js  ← Turbopack 替代 webpack
+```
+
+## 一个 vibe coding 场景
+
+假设你跟 AI 说："帮我建一个 React 后台管理系统。"
+
+- 如果 AI 给你配了 Vite：合理，开发体验好，社区生态全。
+- 如果 AI 给你配了 webpack：也能跑，但配置可能会更复杂，构建更慢。
+- 如果 AI 给你配了 Rollup：有点奇怪，Rollup 更适合库而不是应用。
+- 如果 AI 给你配了 Next.js：那底层可能是 Turbopack 或 webpack，你不用太关心。
+
+你不需要记住每个工具的所有细节，只需要能判断：这个选择是不是合适我的场景？
+
+## 总结
+
+这些打包器不是互相取代的，而是在不同取舍下长出来的：
+
+- **webpack** 奠定了现代前端工程化的基础，现在被各种 Rust 工具"致敬"。
+- **Rollup** 是库作者的好朋友，Tree Shaking 干净。
+- **esbuild** 证明了用非 JS 语言写打包器可以快到什么程度。
+- **Vite** 把 esbuild 和 Rollup 拼成了最好用的应用开发方案。
+- **Rspack、Rolldown、Turbopack** 代表了 Rust 重写潮，分别替代 webpack、Rollup 和 Next.js 里的 webpack。
+
+下次 AI 在配置文件里写了一个你不认识的打包器，先问它三个问题：
+
+1. 这个工具主要替代谁？
+2. 它用什么语言写的，快不快？
+3. 它适合应用还是库，是不是绑定特定框架？
+
+能回答这三个问题，你就已经比大多数只会复制配置的人更清楚自己在做什么了。
