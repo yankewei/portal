@@ -6,6 +6,9 @@
 .content-collections
 .source
 
+# pagefind indexes are regenerated during build
+/public/pagefind/
+
 # test & build
 /coverage
 /dist/
