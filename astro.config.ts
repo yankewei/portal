@@ -19,6 +19,10 @@ import config from "./astro-paper.config";
 
 export default defineConfig({
   site: config.site.url,
+  redirects: {
+    "/support/countdown": "/apps/lunarloop/support/",
+    "/privacy/countdown": "/apps/lunarloop/support/#privacy",
+  },
   integrations: [
     mdx(),
     sitemap({

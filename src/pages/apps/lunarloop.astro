@@ -1,0 +1,628 @@
+---
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Footer from "@/components/Footer.astro";
+import Header from "@/components/Header.astro";
+import Layout from "@/layouts/Layout.astro";
+import config from "@/config";
+
+const app = {
+  name: "日月有期",
+  description:
+    "同时支持农历与公历的重要日子提醒，让生日、纪念日和节日如期而至。",
+  appStoreURL: "https://apps.apple.com/app/id6747391274",
+  supportURL: "/apps/lunarloop/support/",
+};
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: app.name,
+  description: app.description,
+  operatingSystem: "iOS 18.0 or later",
+  applicationCategory: "UtilitiesApplication",
+  downloadUrl: app.appStoreURL,
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "CNY",
+  },
+};
+---
+
+<Layout
+  title={`${app.name} | ${config.site.title}`}
+  description={app.description}
+>
+  <script
+    slot="head"
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify(structuredData)}
+  />
+
+  <Header />
+  <Breadcrumb />
+
+  <main id="main-content" class="product-page app-layout">
+    <section class="hero" aria-labelledby="product-title">
+      <div class="hero-copy">
+        <img
+          src="/image/apps/lunarloop.png"
+          alt="日月有期 App 图标"
+          width="88"
+          height="88"
+          class="app-icon"
+        />
+        <p class="overline">日月有期 · FOR iPHONE</p>
+        <h1 id="product-title">记住每一个<br />重要日子。</h1>
+        <p class="hero-description">{app.description}</p>
+        <div class="hero-actions">
+          <a
+            class="download-link"
+            href={app.appStoreURL}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>免费下载</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <a class="support-link" href={app.supportURL}>技术支持</a>
+        </div>
+        <p class="requirement">需要 iOS 18.0 或更高版本</p>
+      </div>
+
+      <div class="hero-visual" aria-label="日月有期日历界面预览">
+        <div class="date-note date-note-solar">
+          <span>公历</span>
+          <strong>7月26日</strong>
+        </div>
+        <img
+          src="/image/apps/lunarloop-calendar.png"
+          alt="日月有期日历界面，同时显示公历和农历日期"
+          width="1320"
+          height="2868"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <div class="date-note date-note-lunar">
+          <span>农历</span>
+          <strong>六月十三</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="principles" aria-label="产品特点">
+      <div>
+        <strong>两种历法</strong>
+        <span>农历与公历并列呈现</span>
+      </div>
+      <div>
+        <strong>三档提醒</strong>
+        <span>当天、提前 3 天、提前 7 天</span>
+      </div>
+      <div>
+        <strong>本地优先</strong>
+        <span>你的日期留在设备上</span>
+      </div>
+    </section>
+
+    <section class="statement" aria-labelledby="statement-title">
+      <p>农历不是附加信息，<br />它本来就是我们记住日子的方式。</p>
+      <h2 id="statement-title">一眼看懂今天，也看见下一个值得期待的日子。</h2>
+    </section>
+
+    <section class="story story-reminders" aria-labelledby="reminders-title">
+      <div class="story-visual">
+        <span class="visual-label">REMINDERS</span>
+        <img
+          src="/image/apps/lunarloop-reminders.png"
+          alt="日月有期提醒列表，按日期显示即将到来的重要日子"
+          width="1320"
+          height="2868"
+          loading="lazy"
+        />
+      </div>
+      <div class="story-copy">
+        <p class="section-number">01</p>
+        <h2 id="reminders-title">先看最近的，<br />再从容安排。</h2>
+        <p>
+          生日、纪念日和聚会按照距离今天的时间自然排序。下一个重要日子被单独突出，剩余天数一眼可见。
+        </p>
+        <ul>
+          <li>支持不重复与每年重复</li>
+          <li>农历、公历事件统一排序</li>
+          <li>桌面小组件展示近期日程</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="story story-editor" aria-labelledby="editor-title">
+      <div class="story-copy">
+        <p class="section-number">02</p>
+        <h2 id="editor-title">一次设置，<br />在需要时想起。</h2>
+        <p>
+          创建事件时直接选择历法、日期和重复方式，再自由组合当天、提前 3
+          天与提前 7 天提醒。
+        </p>
+        <p class="local-note">通知由 iOS 在本地安排，不依赖开发者服务器。</p>
+      </div>
+      <div class="story-visual">
+        <span class="visual-label">NEW EVENT</span>
+        <img
+          src="/image/apps/lunarloop-editor.png"
+          alt="日月有期添加事件界面，可设置农历日期、重复方式和提醒时间"
+          width="1320"
+          height="2868"
+          loading="lazy"
+        />
+      </div>
+    </section>
+
+    <section class="privacy-row" aria-labelledby="privacy-title">
+      <div>
+        <p class="section-number">PRIVACY</p>
+        <h2 id="privacy-title">你的日期，只属于你。</h2>
+      </div>
+      <p>
+        日月有期不收集你的个人数据。自定义事件保存在本机，系统日历仅在获得授权后于设备上读取和展示。
+      </p>
+      <a href={`${app.supportURL}#privacy`}>隐私说明 →</a>
+    </section>
+
+    <section class="final-cta" aria-labelledby="download-title">
+      <img src="/image/apps/lunarloop.png" alt="" width="64" height="64" />
+      <div>
+        <h2 id="download-title">日月有期</h2>
+        <p>让重要日子，如期而至。</p>
+      </div>
+      <a href={app.appStoreURL} target="_blank" rel="noreferrer">
+        App Store 下载 ↗
+      </a>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .product-page {
+    --product-accent: #ad4c3e;
+    --product-accent-deep: #78352c;
+    --product-canvas: #f7f3ea;
+    --product-surface: #fcfaf6;
+    --product-ink: #28231f;
+    --product-muted: #777168;
+    --product-faint: #a49d92;
+    --product-line: rgb(54 50 45 / 13%);
+    padding-bottom: 5rem;
+  }
+
+  :global([data-theme="dark"]) .product-page {
+    --product-accent: #d18273;
+    --product-accent-deep: #edaa9d;
+    --product-canvas: #2d2924;
+    --product-surface: #37312b;
+    --product-ink: #f5f0e8;
+    --product-muted: rgb(255 255 255 / 64%);
+    --product-faint: rgb(255 255 255 / 42%);
+    --product-line: rgb(255 255 255 / 12%);
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 0.88fr) minmax(18rem, 1.12fr);
+    gap: clamp(2rem, 7vw, 4.5rem);
+    align-items: center;
+    min-height: 40rem;
+    padding-block: clamp(2rem, 8vw, 5rem);
+  }
+
+  .app-icon {
+    width: 5.5rem;
+    height: 5.5rem;
+    border-radius: 1.35rem;
+    box-shadow: 0 1.25rem 2.5rem rgb(80 51 42 / 18%);
+  }
+
+  .overline,
+  .section-number,
+  .visual-label {
+    color: var(--product-accent);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+  }
+
+  .overline {
+    margin-top: 1.5rem;
+  }
+
+  .hero h1 {
+    margin-top: 0.9rem;
+    color: var(--product-ink);
+    font-size: clamp(2.45rem, 6vw, 3.7rem);
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    line-height: 1.08;
+  }
+
+  .hero-description {
+    margin-top: 1.35rem;
+    color: var(--product-muted);
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 1.75rem;
+  }
+
+  .download-link {
+    display: inline-flex;
+    min-width: 9.5rem;
+    min-height: 2.8rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-inline: 1rem;
+    border-radius: 999px;
+    background: var(--product-accent);
+    color: #fffaf4;
+    font-size: 0.76rem;
+    font-weight: 700;
+    transition:
+      background-color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .download-link:hover {
+    background: var(--product-accent-deep);
+    transform: translateY(-2px);
+  }
+
+  .support-link {
+    color: var(--product-ink);
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: var(--product-line);
+    text-underline-offset: 0.3rem;
+  }
+
+  .support-link:hover {
+    color: var(--product-accent);
+    text-decoration-color: currentColor;
+  }
+
+  .requirement {
+    margin-top: 0.9rem;
+    color: var(--product-faint);
+    font-size: 0.62rem;
+  }
+
+  .hero-visual {
+    position: relative;
+    isolation: isolate;
+    min-height: 36rem;
+    overflow: hidden;
+    display: grid;
+    place-items: start center;
+    padding-top: 2.5rem;
+    border-radius: 2rem;
+    background: var(--product-canvas);
+  }
+
+  .hero-visual::before {
+    position: absolute;
+    z-index: -1;
+    inset: 18% -20% auto;
+    height: 16rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--product-accent) 11%, transparent);
+    content: "";
+    filter: blur(2.5rem);
+  }
+
+  .hero-visual > img {
+    width: min(16.5rem, 78%);
+    height: auto;
+    border: 0.45rem solid #28231f;
+    border-bottom: 0;
+    border-radius: 2.9rem 2.9rem 0 0;
+    box-shadow: 0 2rem 4rem rgb(71 54 43 / 18%);
+  }
+
+  .date-note {
+    position: absolute;
+    z-index: 1;
+    min-width: 6.4rem;
+    padding: 0.8rem;
+    border: 1px solid var(--product-line);
+    border-radius: 0.8rem;
+    background: color-mix(in srgb, var(--product-surface) 90%, transparent);
+    box-shadow: 0 0.8rem 2rem rgb(71 54 43 / 10%);
+    backdrop-filter: blur(0.8rem);
+  }
+
+  .date-note span {
+    display: block;
+    color: var(--product-faint);
+    font-size: 0.58rem;
+  }
+
+  .date-note strong {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--product-ink);
+    font-size: 0.78rem;
+  }
+
+  .date-note-solar {
+    top: 6rem;
+    left: 0.65rem;
+  }
+
+  .date-note-lunar {
+    right: 0.65rem;
+    bottom: 4.5rem;
+  }
+
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--product-line);
+    border-bottom: 1px solid var(--product-line);
+  }
+
+  .principles > div {
+    padding: 1.4rem 1rem;
+  }
+
+  .principles > div + div {
+    border-left: 1px solid var(--product-line);
+  }
+
+  .principles strong,
+  .principles span {
+    display: block;
+  }
+
+  .principles strong {
+    color: var(--product-ink);
+    font-size: 0.78rem;
+  }
+
+  .principles span {
+    margin-top: 0.35rem;
+    color: var(--product-faint);
+    font-size: 0.62rem;
+  }
+
+  .statement {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(2rem, 8vw, 5rem);
+    align-items: end;
+    padding-block: clamp(5rem, 13vw, 8rem);
+  }
+
+  .statement > p {
+    color: var(--product-accent);
+    font-size: 0.72rem;
+    line-height: 1.8;
+  }
+
+  .statement h2,
+  .story h2,
+  .privacy-row h2 {
+    color: var(--product-ink);
+    font-size: clamp(1.75rem, 5vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 1.25;
+  }
+
+  .story {
+    display: grid;
+    grid-template-columns: minmax(17rem, 1.08fr) minmax(0, 0.92fr);
+    gap: clamp(2.5rem, 9vw, 6rem);
+    align-items: center;
+    padding-block: clamp(3rem, 8vw, 5rem);
+  }
+
+  .story-editor {
+    grid-template-columns: minmax(0, 0.92fr) minmax(17rem, 1.08fr);
+  }
+
+  .story-visual {
+    position: relative;
+    min-height: 37rem;
+    overflow: hidden;
+    display: grid;
+    place-items: start center;
+    padding-top: 3rem;
+    border-radius: 1.5rem;
+    background: var(--product-canvas);
+  }
+
+  .story-visual img {
+    width: min(17rem, 76%);
+    height: auto;
+    border: 0.4rem solid #28231f;
+    border-bottom: 0;
+    border-radius: 2.7rem 2.7rem 0 0;
+    box-shadow: 0 1.7rem 3.5rem rgb(71 54 43 / 16%);
+  }
+
+  .visual-label {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+  }
+
+  .story-copy h2 {
+    margin-top: 1rem;
+  }
+
+  .story-copy > p:not(.section-number) {
+    margin-top: 1.3rem;
+    color: var(--product-muted);
+    font-size: 0.8rem;
+    line-height: 1.85;
+  }
+
+  .story-copy ul {
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--product-line);
+  }
+
+  .story-copy li {
+    padding-block: 0.75rem;
+    border-bottom: 1px solid var(--product-line);
+    color: var(--product-ink);
+    font-size: 0.7rem;
+  }
+
+  .story-copy .local-note {
+    padding-left: 0.8rem;
+    border-left: 2px solid var(--product-accent);
+    color: var(--product-faint);
+    font-size: 0.68rem;
+  }
+
+  .privacy-row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr) auto;
+    gap: 2rem;
+    align-items: end;
+    margin-top: clamp(4rem, 10vw, 7rem);
+    padding-block: 2rem;
+    border-top: 1px solid var(--product-line);
+    border-bottom: 1px solid var(--product-line);
+  }
+
+  .privacy-row h2 {
+    margin-top: 0.65rem;
+    font-size: 1.4rem;
+  }
+
+  .privacy-row > p {
+    color: var(--product-muted);
+    font-size: 0.7rem;
+    line-height: 1.8;
+  }
+
+  .privacy-row a {
+    color: var(--product-accent);
+    font-size: 0.7rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .privacy-row a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25rem;
+  }
+
+  .final-cta {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1.25rem;
+    align-items: center;
+    margin-top: 5rem;
+    padding: 1.4rem;
+    border-radius: 1.1rem;
+    background: var(--product-canvas);
+  }
+
+  .final-cta img {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1rem;
+  }
+
+  .final-cta h2 {
+    color: var(--product-ink);
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .final-cta p {
+    margin-top: 0.25rem;
+    color: var(--product-muted);
+    font-size: 0.65rem;
+  }
+
+  .final-cta a {
+    color: var(--product-accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .hero,
+    .statement,
+    .story,
+    .story-editor,
+    .privacy-row {
+      grid-template-columns: 1fr;
+    }
+
+    .hero {
+      min-height: auto;
+    }
+
+    .hero-visual {
+      min-height: 34rem;
+    }
+
+    .principles {
+      grid-template-columns: 1fr;
+    }
+
+    .principles > div + div {
+      border-top: 1px solid var(--product-line);
+      border-left: 0;
+    }
+
+    .story {
+      gap: 2rem;
+    }
+
+    .story-editor .story-copy {
+      order: 2;
+    }
+
+    .story-editor .story-visual {
+      order: 1;
+    }
+
+    .story-visual {
+      min-height: 35rem;
+    }
+
+    .privacy-row {
+      align-items: start;
+    }
+
+    .final-cta {
+      grid-template-columns: auto 1fr;
+    }
+
+    .final-cta a {
+      grid-column: 1 / -1;
+      padding-top: 1rem;
+      border-top: 1px solid var(--product-line);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .download-link {
+      transition: none;
+    }
+  }
+</style>
