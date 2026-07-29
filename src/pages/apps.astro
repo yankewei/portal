@@ -9,7 +9,7 @@ import config from "@/config";
 
 <Layout
   title={`Apps | ${config.site.title}`}
-  description="Kewei Yan 开发的 macOS 应用与个人工具。"
+  description="Kewei Yan 开发的 iOS、macOS 应用与个人工具。"
 >
   <Header />
   <Breadcrumb />
@@ -19,6 +19,39 @@ import config from "@/config";
     </p>
 
     <div class="flex flex-col gap-4">
+      <div class="border-border rounded-lg border p-6">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <img
+            src="/image/apps/lunarloop.png"
+            alt="日月有期 icon"
+            width="64"
+            height="64"
+            class="h-16 w-16 rounded-xl"
+          />
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center gap-3">
+              <h2 class="text-xl font-semibold">
+                <a href="/apps/lunarloop" class="text-accent hover:underline">
+                  日月有期
+                </a>
+              </h2>
+              <span class="text-muted-foreground text-sm">
+                iOS · 日期提醒
+              </span>
+            </div>
+            <p class="text-foreground/80 mt-2 text-sm">
+              同时支持农历与公历的重要日子倒数，让生日、纪念日和节日如期而至。
+            </p>
+          </div>
+          <a
+            href="/apps/lunarloop"
+            class="text-accent text-sm font-medium whitespace-nowrap hover:underline"
+          >
+            了解详情 →
+          </a>
+        </div>
+      </div>
+
       <div class="border-border rounded-lg border p-6">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
           <img
@@ -39,13 +72,13 @@ import config from "@/config";
                 Web · Investment Tool
               </span>
             </div>
-            <p class="mt-2 text-sm text-foreground/80">
+            <p class="text-foreground/80 mt-2 text-sm">
               监控中国大陆纳斯达克100 ETF联接基金（QDII）的申购限额情况。
             </p>
           </div>
           <a
             href="/apps/qdii-watch"
-            class="text-accent hover:underline text-sm font-medium whitespace-nowrap"
+            class="text-accent text-sm font-medium whitespace-nowrap hover:underline"
           >
             了解详情 →
           </a>
@@ -72,13 +105,13 @@ import config from "@/config";
                 macOS · Developer Utility
               </span>
             </div>
-            <p class="mt-2 text-sm text-foreground/80">
+            <p class="text-foreground/80 mt-2 text-sm">
               把 API 密钥留在系统钥匙串里，而不是散落在配置文件和聊天记录中。
             </p>
           </div>
           <a
             href="/apps/key-dock"
-            class="text-accent hover:underline text-sm font-medium whitespace-nowrap"
+            class="text-accent text-sm font-medium whitespace-nowrap hover:underline"
           >
             了解详情 →
           </a>
@@ -86,7 +119,7 @@ import config from "@/config";
       </div>
     </div>
 
-    <p class="mt-8 text-sm text-foreground/60">
+    <p class="text-foreground/60 mt-8 text-sm">
       新应用会继续加入这里。每个应用都会有独立页面，用于说明用途、设计取舍和访问方式。
     </p>
   </Main>
