@@ -52,12 +52,10 @@ const homePath = getRelativeLocaleUrl(locale, "");
         <span class="sr-only">RSS Feed</span>
       </a>
 
-      <p>
-        后端工程师，写代码，也做工具，记录问题。
-      </p>
+      <p>后端工程师，写代码，也做工具，记录问题。</p>
       <p class="mt-2">
-        主要使用 PHP，关注 Redis 与 Laravel 内部实现。
-        最近在用 Rust 和 Mago 探索更可靠的工程工具，也为自己的日常工作做一些 macOS 应用。
+        主要使用 PHP，关注 Redis 与 Laravel 内部实现。 最近在用 Rust 和 Mago
+        探索更可靠的工程工具，也为自己的日常工作做一些 macOS 应用。
       </p>
       {
         socials.length > 0 && (
@@ -71,76 +69,134 @@ const homePath = getRelativeLocaleUrl(locale, "");
       }
     </section>
 
-    <section
-      id="apps"
-      class="border-border border-b pt-12 pb-6"
-    >
-      <h2 class="text-2xl font-semibold tracking-wide">App</h2>
-      <div class="mt-6 flex flex-col gap-4">
-        <div class="border-border rounded-lg border p-5 sm:p-6">
-          <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+    <section id="apps" class="border-border border-b pt-12 pb-6">
+      <div class="flex items-end justify-between gap-4">
+        <h2 class="text-2xl font-semibold tracking-wide">Apps</h2>
+        <a
+          href="/apps"
+          class="text-muted-foreground [@media(hover:hover)]:hover:text-accent text-sm font-medium"
+        >
+          查看全部 →
+        </a>
+      </div>
+
+      <div
+        class="border-border bg-foreground/[0.015] mt-6 overflow-hidden rounded-xl border"
+      >
+        <a
+          href="/apps/lunarloop"
+          class="group border-border flex flex-col gap-5 border-b p-5 sm:flex-row sm:items-center sm:p-7"
+        >
+          <img
+            src="/image/apps/lunarloop.png"
+            alt="日月有期 icon"
+            width="72"
+            height="72"
+            class="h-18 w-18 rounded-2xl outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
+          />
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <h3
+                class="[@media(hover:hover)]:group-hover:text-accent text-xl font-semibold transition-colors"
+              >
+                日月有期
+              </h3>
+              <span class="text-muted-foreground text-xs">
+                iOS · 日期提醒
+              </span>
+            </div>
+            <p class="text-foreground/75 mt-2 text-sm leading-relaxed">
+              同时支持农历与公历的重要日子倒数，让生日、纪念日和节日如期而至。
+            </p>
+          </div>
+          <span
+            class="text-accent flex min-h-10 shrink-0 items-center text-sm font-medium"
+          >
+            了解详情
+            <span
+              aria-hidden="true"
+              class="ms-1 transition-transform motion-reduce:transition-none [@media(hover:hover)]:group-hover:translate-x-1"
+            >
+              →
+            </span>
+          </span>
+        </a>
+
+        <div class="grid sm:grid-cols-2">
+          <a
+            href="/apps/qdii-watch"
+            class="group border-border flex flex-col gap-4 border-b p-5 sm:border-e sm:border-b-0 sm:p-6"
+          >
             <img
               src="/image/apps/qdii-watch.png"
               alt="QDII Watch icon"
               width="56"
               height="56"
-              class="h-14 w-14 rounded-xl"
+              class="h-14 w-14 rounded-xl outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
             />
-            <div class="flex-1">
-              <div class="flex flex-wrap items-center gap-2">
-                <h3 class="text-lg font-semibold">
-                  <a href="/apps/qdii-watch" class="text-accent hover:underline">
-                    QDII Watch
-                  </a>
+            <div class="flex flex-1 flex-col">
+              <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <h3
+                  class="[@media(hover:hover)]:group-hover:text-accent text-lg font-semibold transition-colors"
+                >
+                  QDII Watch
                 </h3>
                 <span class="text-muted-foreground text-xs">
-                  Web · Investment Tool
+                  Web · 投资工具
                 </span>
               </div>
-              <p class="mt-1 text-sm text-foreground/80">
+              <p class="text-foreground/75 mt-2 text-sm leading-relaxed">
                 监控中国大陆纳斯达克100 ETF联接基金（QDII）的申购限额情况。
               </p>
+              <span
+                class="text-accent mt-4 flex min-h-10 items-center self-start text-sm font-medium"
+              >
+                了解详情
+                <span
+                  aria-hidden="true"
+                  class="ms-1 transition-transform motion-reduce:transition-none [@media(hover:hover)]:group-hover:translate-x-1"
+                >
+                  →
+                </span>
+              </span>
             </div>
-            <a
-              href="/apps/qdii-watch"
-              class="text-accent hover:underline text-sm font-medium whitespace-nowrap"
-            >
-              了解详情 →
-            </a>
-          </div>
-        </div>
+          </a>
 
-        <div class="border-border rounded-lg border p-5 sm:p-6">
-          <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <a href="/apps/key-dock" class="group flex flex-col gap-4 p-5 sm:p-6">
             <img
               src="/image/apps/key-dock.png"
               alt="Key Dock icon"
               width="56"
               height="56"
-              class="h-14 w-14 rounded-xl"
+              class="h-14 w-14 rounded-xl outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
             />
-            <div class="flex-1">
-              <div class="flex flex-wrap items-center gap-2">
-                <h3 class="text-lg font-semibold">
-                  <a href="/apps/key-dock" class="text-accent hover:underline">
-                    Key Dock
-                  </a>
+            <div class="flex flex-1 flex-col">
+              <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <h3
+                  class="[@media(hover:hover)]:group-hover:text-accent text-lg font-semibold transition-colors"
+                >
+                  Key Dock
                 </h3>
                 <span class="text-muted-foreground text-xs">
-                  macOS · Developer Utility
+                  macOS · 开发者工具
                 </span>
               </div>
-              <p class="mt-1 text-sm text-foreground/80">
+              <p class="text-foreground/75 mt-2 text-sm leading-relaxed">
                 把 API 密钥留在系统钥匙串里，而不是散落在配置文件和聊天记录中。
               </p>
+              <span
+                class="text-accent mt-4 flex min-h-10 items-center self-start text-sm font-medium"
+              >
+                了解详情
+                <span
+                  aria-hidden="true"
+                  class="ms-1 transition-transform motion-reduce:transition-none [@media(hover:hover)]:group-hover:translate-x-1"
+                >
+                  →
+                </span>
+              </span>
             </div>
-            <a
-              href="/apps/key-dock"
-              class="text-accent hover:underline text-sm font-medium whitespace-nowrap"
-            >
-              了解详情 →
-            </a>
-          </div>
+          </a>
         </div>
       </div>
     </section>
